@@ -42,18 +42,20 @@ void displayData(int mode){
 
 //********************Dispaly Modes******************************/*
 void displayModeOne(){
+  int rangeMult = 5; //When mutplied by the last data point in the data sets the range vaule of the display
   //Place a blinking curser at the start point.
   if ( tData.isEmpty() ){
     blinkingCursor(0);
-  } 
-  if ( tData.size() == 1 ){
-    fill(cursorColor);
-    rect(0, height / 3, 15, 15);
-    int cursorXPos = floor( map( millis(), 0, 200000, 0, width));
-    blinkingCursor(cursorXPos);
-  }
+  } else {
+  //Draw the data from the array.
   for(int i = 0; i < tData.size(); i++){
-      
+    fill(cursorColor);  
+    int cursorXPos =  floor( map( tData.get(i), tData.get(0), tData.get( tData.size() - 1 ) * rangeMult, 0, width));
+    rect(cursorXPos, width / 3, 15, 15);
+  }
+  //Draw the blinking currser at the current time postion
+    int cursorXPos = floor( map( millis(), 0, tData.get( tData.size() - 1 )* 10, 0, width));
+    blinkingCursor(cursorXPos);
   }
 }
 
