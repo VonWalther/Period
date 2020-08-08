@@ -2,6 +2,7 @@
 
 ArrayList<Integer> tData;
 float diffAverage;
+float avgDevation;
 
 int dataDisplayMode = 2; //Changes how the data is displayed by this global varable.
 int frameCountMod = 60; //Used to change the rate of blinking. 
@@ -47,11 +48,20 @@ void draw() {
 // ******************** KEYPRESSED **********************************************************/
 void keyReleased() {
   if (key == ' ') {
+    //Read in the time stamp.
     Integer timeStamp = millis();
-    tData.add(timeStamp);
-    if( tData.size() > 2){
-      //Find the new average of time differates.
+    //Update the aveage diffeance between time stamps.
+     if( tData.size() > 2){ //<>//
+      float diff = abs(timeStamp - tData.get( tData.size() - 1 ));
+      diffAverage = findDataAverage(diff, diffAverage, tData.size() - 1); 
+    } else if(tData.size() == 2) {
+      diffAverage = abs( tData.get(0) - tData.get(1) );
+    } else {
+      diffAverage = 0;
+      avgDevation = 10;
     }
+    //Add the time stamp to the data set.
+    tData.add(timeStamp);
   }
 }
 
@@ -100,11 +110,18 @@ void displayModeTwo(){
     blinkingCursor(width / 2);  
   }else {
       if( tData.size() == 1 ){   // n = 1
-      fill(cursorColor);
-      int cursorXPos = findCurrentPostion( tData.get(0), tData.get(0), lineMargin, width);
-      drawElement(cursorXPos, linePostion);  
-     } else {  // n = 2+
-       
+         fill(cursorColor);
+         int cursorXPos = findCurrentPostion( tData.get(0), tData.get(0), lineMargin, width);
+         drawElement(cursorXPos, linePostion);  
+       } else {  // n = 2+
+         fill(cursorColor);
+         for( int i = 1; i < tData.size() - 1; i++){
+           //Draw The Diffents a scalled from the average by their diffrents.
+           float diffDataPoint = tData.get(i) - tData.get(i -1); 
+           int cursorXPos  = findCurrentPostion( tData.get(i), tData.get(0), lineMargin, width);
+           int cursorYPos = floor( map( diffDataPoint, diffAverage, avgDevation * 2, linePostion,  linePostion * 2));
+           drawElement(cursorXPos, cursorYPos);
+         }
      }
      int cursorXPos = findCurrentPostion( millis(), tData.get(0), lineMargin, width);
      blinkingCursor(cursorXPos);
@@ -152,9 +169,12 @@ int findCurrentPostion(int timeStamp, float dataLowerBound, float dispLowerBound
 
 //*************************** Find Data Average *****************************************/
 float findDataAverage(float newDataPoint, float oldAverage, int nOfData){
-  float lastTotal = (oldAverage * nOfData - 1);
+  float lastTotal = (oldAverage * nOfData);
     
-  float newAverage =  ( lastTotal + newDataPoint ) / nOfData;
+  float newAverage =  ( lastTotal + newDataPoint ) / ( nOfData + 1);
+  //Debuging
+  String out = String.format("n: %3d nPoint: %5.3f -- Old Avg. %4.1f --> New Avg. %4.1f!", nOfData, newDataPoint/1000, oldAverage/1000, newAverage/1000); 
+  println(out);
   
   return newAverage;
 }
@@ -200,8 +220,8 @@ void displayModeOne() {
 void drawElement(int xPos, int yPos){
   rectMode(CENTER);
   stroke(10);
-  int size = 15;
-  rect(xPos, yPos, size, size);
+  int size = 10;
+  ellipse(xPos, yPos, size, size);
 }
 
 //***************************** BLINKING CURSOR******************************/
@@ -213,7 +233,9 @@ void blinkingCursor(int xPos) {
   } else {
     fill(altCursorColor);
   }
-  drawElement(xPos, linePostion);
+  rectMode(CENTER);
+  stroke(10);
+  rect(xPos, linePostion, 15, 15);
 }
 
 //**************************** Display Mode Zero ******************************************/
