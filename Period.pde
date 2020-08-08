@@ -1,11 +1,15 @@
+//This is a demo of a peridicity tracking application.
 
 ArrayList<Integer> tData;
-float tAverage;
+float diffAverage;
 
 int dataDisplayMode = 2; //Changes how the data is displayed by this global varable.
 int frameCountMod = 60; //Used to change the rate of blinking. 
 //Global Color Values
 color cursorColor = color(100, 100, 255);
+
+PFont axisLablesFont;
+PFont instructionFont;
 
 //Postioning Constants
 int textPostion;
@@ -23,6 +27,10 @@ void setup() {
   textPostion = height * 5 / 6;
   lineMargin = 50;
   linePostion = height / 3;
+  
+  //Set up the Fonts
+  axisLablesFont = loadFont("data/BellMTBold-12.vlw");
+  instructionFont = loadFont("data/BellMT-32.vlw");
 }
 
 // *************** THE MAIN FUNCTION, WHAT MAKES ALL THE FUN HAPPEN! ************************/
@@ -32,14 +40,18 @@ void draw() {
   displayData(dataDisplayMode);
   textAlign(CENTER);
   fill(230);
+  textFont(instructionFont);
   text("Hit the space bar to record each event.", width / 2, textPostion);
 
 }
 // ******************** KEYPRESSED **********************************************************/
-void keyPressed() {
+void keyReleased() {
   if (key == ' ') {
     Integer timeStamp = millis();
     tData.add(timeStamp);
+    if( tData.size() > 2){
+      //Find the new average of time differates.
+    }
   }
 }
 
@@ -77,27 +89,32 @@ void drawGraphAxies(){
     line(lineMargin, linePostion * 2, lineMargin + arrowLengthFact, linePostion * 2 - arrowLengthFact);
 }
 
-
-//********************Dispaly Modes******************************/*
+//************************************************************************************************/
+//**************************** Dispaly Modes *****************************************************/
+//************************************************************************************************/
 
 /***************************** Dispaly Mode Two ****************************************/
 void displayModeTwo(){
   // n = 0
   if( tData.isEmpty() ){
     blinkingCursor(width / 2);  
-  }else if( tData.size() == 1 ){   // n = 1
-     tAverage = tData.get(0);
-     fill(cursorColor);
-     int cursorXPos = findCurrentPostion( tData.get(0), tData.get(0), lineMargin, width);
-     drawElement(cursorXPos, linePostion);
-     cursorXPos = findCurrentPostion( millis(), tData.get(0), lineMargin, width);
+  }else {
+      if( tData.size() == 1 ){   // n = 1
+      fill(cursorColor);
+      int cursorXPos = findCurrentPostion( tData.get(0), tData.get(0), lineMargin, width);
+      drawElement(cursorXPos, linePostion);  
+     } else {  // n = 2+
+       
+     }
+     int cursorXPos = findCurrentPostion( millis(), tData.get(0), lineMargin, width);
      blinkingCursor(cursorXPos);
-     
-  } 
-  // n = 2+ 
+  }
+  displayXAxis();    
+   
 
   
 }
+
 //***************************** Find Current Postion ************************************/
 int findCurrentPostion(int timeStamp, float dataLowerBound, float dispLowerBound, float dispUpperBound){
   //This array holds the break points for the ranging of the x axies. From the largest to the smallest.
@@ -130,16 +147,28 @@ int findCurrentPostion(int timeStamp, float dataLowerBound, float dispLowerBound
 
   int calcualtedXPos = floor( map (timeStamp, dataLowerBound, dataUpperBound, dispLowerBound, dispUpperBound) );
  
-
-  return calcualtedXPos;
-  
+  return calcualtedXPos; 
 }
 
 //*************************** Find Data Average *****************************************/
 float findDataAverage(float newDataPoint, float oldAverage, int nOfData){
-  float newAverage = 0;
+  float lastTotal = (oldAverage * nOfData - 1);
+    
+  float newAverage =  ( lastTotal + newDataPoint ) / nOfData;
   
   return newAverage;
+}
+
+//**************************** Display X Axis *******************************************/
+void displayXAxis(){
+  String dispAvg = String.format("%5.2f", diffAverage /1000);
+  
+  stroke(200);
+  fill(200);
+  textFont(axisLablesFont);
+  textAlign(LEFT);
+  text(dispAvg, 5, linePostion);
+  
 }
 
 //**************************** Dispaly Mode One *****************************************/
