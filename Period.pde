@@ -98,6 +98,42 @@ void displayModeTwo(){
 
   
 }
+//***************************** Find Current Postion ************************************/
+int findCurrentPostion(int timeStamp, float dataLowerBound, float dispLowerBound, float dispUpperBound){
+  //This array holds the break points for the ranging of the x axies. From the largest to the smallest.
+  //
+  int[] tBreakPoints = new int[6];
+  tBreakPoints[0] = 4320000; // Largest Vaule -- 12 Hrs [0]
+  tBreakPoints[1] = 3600000; // 1  hour                 [1]
+  tBreakPoints[2] =  600000; // 10 minutes              [2]
+  tBreakPoints[3] =  300000; // 5  minutes              [3]
+  tBreakPoints[4] =  120000; // 2  minutes              [4]
+  tBreakPoints[5] =   30000; // 30 seconds              [5]                   
+                           
+  
+  float dataUpperBound;
+  float currentTime = millis();
+  //Will need to come back later and add some trastional effects between each break point to smooth it out and make less ruff.
+  if( currentTime > tBreakPoints[1]){
+    dataUpperBound = tBreakPoints[0];
+  } else if(currentTime > tBreakPoints[2]) {
+    dataUpperBound = tBreakPoints[1];
+  } else if(currentTime > tBreakPoints[3]) {
+    dataUpperBound = tBreakPoints[2];
+  } else if(currentTime > tBreakPoints[4]) {
+    dataUpperBound = tBreakPoints[3];
+  } else if(currentTime > tBreakPoints[5]) {
+    dataUpperBound = tBreakPoints[4];
+  } else {
+    dataUpperBound = tBreakPoints[5];
+  }
+
+  int calcualtedXPos = floor( map (timeStamp, dataLowerBound, dataUpperBound, dispLowerBound, dispUpperBound) );
+ 
+
+  return calcualtedXPos;
+  
+}
 
 //*************************** Find Data Average *****************************************/
 float findDataAverage(float newDataPoint, float oldAverage, int nOfData){
@@ -129,23 +165,7 @@ void displayModeOne() {
     blinkingCursor(cursorXPos);
   }
 }
-//***************************** Find Current Postion ************************************/
-int findCurrentPostion(int timeStamp,float dataLowerBound, float dispLowerBound, float dispUpperBound){
-  float dataUpperBound = 60000;
-  if ( millis() >= 3600000 ){
-    dataUpperBound = 3600000;
-  } else if(millis() >= 60000 ) { //<>//
-    dataUpperBound = 60000;  
-  }
-  println(millis());
-  
-  
-  //float dataUpperBound = 1.3 * ( millis() - dataLowerBound );
-  //float dataUpperBound = millis() *  (log (millis() ) / log(100) ) ;
-  int calcualtedXPos = floor( map (timeStamp, dataLowerBound, dataUpperBound, dispLowerBound, dispUpperBound) );
-  
-  return calcualtedXPos;
-}
+ //<>//
 
 //***************************** DRAW ELEMENT ********************************************/
 void drawElement(int xPos, int yPos){
