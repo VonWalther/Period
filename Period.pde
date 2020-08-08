@@ -14,7 +14,7 @@ int lineMargin;
 int diffOffset;
 
 
-
+//**************************************** SETUP *******************************************/
 void setup() {
   size(1000, 300);
   tData = new ArrayList<Integer>();
@@ -25,7 +25,7 @@ void setup() {
   linePostion = height / 3;
 }
 
-
+// *************** THE MAIN FUNCTION, WHAT MAKES ALL THE FUN HAPPEN! ************************/
 void draw() {
   background(45);
   drawGraphAxies();
@@ -35,7 +35,7 @@ void draw() {
   text("Hit the space bar to record each event.", width / 2, textPostion);
 
 }
-
+// ******************** KEYPRESSED **********************************************************/
 void keyPressed() {
   if (key == ' ') {
     Integer timeStamp = millis();
@@ -43,6 +43,7 @@ void keyPressed() {
   }
 }
 
+// *********************** Mode Switch Switch **********************************************/
 void displayData(int mode) {
   switch(mode) {
   case 2:
@@ -84,12 +85,17 @@ void displayModeTwo(){
   // n = 0
   if( tData.isEmpty() ){
     blinkingCursor(width / 2);  
-  }
-  
-  // n = 1
-  
+  }else if( tData.size() == 1 ){   // n = 1
+     tAverage = tData.get(0);
+     fill(cursorColor);
+     int cursorXPos = findCurrentPostion( tData.get(0), tData.get(0), lineMargin, width);
+     drawElement(cursorXPos, linePostion);
+     cursorXPos = findCurrentPostion( millis(), tData.get(0), lineMargin, width);
+     blinkingCursor(cursorXPos);
+     
+  } 
   // n = 2+ 
-  
+
   
 }
 
@@ -123,7 +129,25 @@ void displayModeOne() {
     blinkingCursor(cursorXPos);
   }
 }
-//***************************** DRAW ELEMENT ********************************/
+//***************************** Find Current Postion ************************************/
+int findCurrentPostion(int timeStamp,float dataLowerBound, float dispLowerBound, float dispUpperBound){
+  float dataUpperBound = 60000;
+  if ( millis() >= 3600000 ){
+    dataUpperBound = 3600000;
+  } else if(millis() >= 60000 ) { //<>//
+    dataUpperBound = 60000;  
+  }
+  println(millis());
+  
+  
+  //float dataUpperBound = 1.3 * ( millis() - dataLowerBound );
+  //float dataUpperBound = millis() *  (log (millis() ) / log(100) ) ;
+  int calcualtedXPos = floor( map (timeStamp, dataLowerBound, dataUpperBound, dispLowerBound, dispUpperBound) );
+  
+  return calcualtedXPos;
+}
+
+//***************************** DRAW ELEMENT ********************************************/
 void drawElement(int xPos, int yPos){
   rectMode(CENTER);
   stroke(10);
