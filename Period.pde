@@ -58,7 +58,7 @@ void keyReleased() {
       diffAverage = abs( tData.get(0) - tData.get(1) );
     } else {
       diffAverage = 0;
-      avgDevation = 10;
+      avgDevation = 100;
     }
     //Add the time stamp to the data set.
     tData.add(timeStamp);
@@ -115,13 +115,17 @@ void displayModeTwo(){
          drawElement(cursorXPos, linePostion);  
        } else {  // n = 2+
          fill(cursorColor);
+         float runningDiffTotal = 0;
          for( int i = 1; i < tData.size() - 1; i++){
            //Draw The Diffents a scalled from the average by their diffrents.
            float diffDataPoint = tData.get(i) - tData.get(i -1); 
            int cursorXPos  = findCurrentPostion( tData.get(i), tData.get(0), lineMargin, width);
-           int cursorYPos = floor( map( diffDataPoint, diffAverage, avgDevation * 2, linePostion,  linePostion * 2));
+           int cursorYPos = floor( map( diffDataPoint, diffAverage, avgDevation * 3, linePostion,  linePostion * 2));
            drawElement(cursorXPos, cursorYPos);
+           //Caculate the Running Diff Total.
+           runningDiffTotal += abs(diffAverage - diffDataPoint);
          }
+         avgDevation = runningDiffTotal / tData.size();
      }
      int cursorXPos = findCurrentPostion( millis(), tData.get(0), lineMargin, width);
      blinkingCursor(cursorXPos);
