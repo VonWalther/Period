@@ -30,7 +30,7 @@ class Display {
   float buttonYPos = graphHeight + (5 * graphMargin);
   float buttonHeight = 5 * rowSpacing;
   
-  PFont instructionFont = loadFont("data/BellMT-32.vlw");
+  PFont instructionFont = loadFont("data/BellMTBold-12.vlw");
   
   float fieldMargin = 2 * graphMargin;
   float fieldWidth = 24 * columnSpacing;
@@ -49,6 +49,11 @@ class Display {
     //Button
     fill(warmBase);
     rect(buttonMargin, buttonYPos, buttonWidth, buttonHeight);
+    //Text in field
+    fill(200);
+    textAlign(CENTER);
+    textFont(instructionFont);
+    text("Hit the space bar to record each event.", width / 2, buttonYPos + (buttonHeight / 2));
     //Data Field
     fill(baseColor);
     rect(fieldMargin, fieldYPos, fieldWidth, fieldHeight);

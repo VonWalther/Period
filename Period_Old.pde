@@ -49,6 +49,7 @@ void draw() {
 }
 */
 // ******************** KEYPRESSED **********************************************************/
+/*
 void keyReleased() {
   if (key == ' ') {
     //Read in the time stamp.
@@ -67,6 +68,7 @@ void keyReleased() {
     tData.add(timeStamp);
   }
 }
+*/
 
 // *********************** Mode Switch Switch **********************************************/
 void displayData(int mode) {
