@@ -19,6 +19,7 @@ void draw(){
   mainDisplay.drawBackGround();
   //mainDisplay.drawLayOutGrid();
   println( mathUnit.toString() );
+  println( mathUnit.getPeriod() );
   
   
 }
