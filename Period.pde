@@ -18,8 +18,8 @@ void setup(){
 void draw(){
   mainDisplay.drawBackGround();
   //mainDisplay.drawLayOutGrid();
-  println( mathUnit.toString() );
-  println( mathUnit.getPeriod() );
+  //println( mathUnit.toString() );
+  //println( mathUnit.getPeriod(2) );
   
   
 }
